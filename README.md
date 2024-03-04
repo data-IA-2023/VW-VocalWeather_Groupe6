@@ -1,6 +1,9 @@
 # VW-VocalWeather_Groupe6
 Sandy et Paolo
 
+SCHEMA DU PROJET:
+![alt text](https://github.com/[ApologosPM]/[VW-VocalWeather_Groupe6]/blob/[paolo]/schemaprojet.png?raw=true)
+
 La miission est la suivante :
 - Intégrer la connexion à l’API Azure Cognitives Services.
 - Intégrer les appels aux fonctions de speech to text.
