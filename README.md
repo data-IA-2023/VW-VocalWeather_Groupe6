@@ -2,7 +2,7 @@
 Sandy et Paolo
 
 SCHEMA DU PROJET:
-![alt text](https://github.com/[ApologosPM]/[VW-VocalWeather_Groupe6]/blob/[paolo]/schemaprojet.png?raw=true)
+![alt text](https://github.com/data-IA-2023/VW-VocalWeather_Groupe6/blob/paolo/schemaprojet.png)
 
 La miission est la suivante :
 - Intégrer la connexion à l’API Azure Cognitives Services.
