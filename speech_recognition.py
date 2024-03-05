@@ -1,6 +1,7 @@
 import os
 import azure.cognitiveservices.speech as speechsdk
 from dotenv import load_dotenv
+import streamlit as st
 
 repertoir_fichier = os.path.dirname(__file__)
 env_path = f'{repertoir_fichier}/.env'
@@ -27,5 +28,6 @@ def recognize_from_microphone():
         if cancellation_details.reason == speechsdk.CancellationReason.Error:
             print("Error details: {}".format(cancellation_details.error_details))
             print("Did you set the speech resource key and region values?")
+
 
 recognize_from_microphone()
