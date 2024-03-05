@@ -1,4 +1,5 @@
 schemaprojet.png
+.bash_profile
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
