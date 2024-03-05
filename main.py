@@ -1,0 +1,3 @@
+from speech_recognition import recognize_from_microphone
+
+recognize_from_microphone()
