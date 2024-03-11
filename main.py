@@ -33,7 +33,7 @@ from nlp import *
 # classe :
 #     meteo
 # methode : 
-#     df => résultat de la requet de l'api
+#     get_meteo: dataframe => résultat de la requet de l'api
 # =========================================
 from meteo import get_meteo
 

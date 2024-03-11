@@ -3,7 +3,7 @@
 classe :
     meteo
 methode : 
-    get_meteo => résultat de la requet de l'api 
+    get_meteo: dataframe => résultat de la requet de l'api 
 ==========================================
 """
 
@@ -23,17 +23,19 @@ load_dotenv(dotenv_path=env_path)
 username = subscription=os.getenv('username_meteo')
 password = subscription=os.getenv('password_meteo')
 
-# requet pour l'API de la meteo
-coordinates = [(47.11, 11.47)]
-parameters = ['t_2m:C', 'precip_1h:mm', 'wind_speed_10m:ms']
-model = 'mix'
-startdate = dt.datetime.utcnow().replace(minute=0, second=0, microsecond=0)
-enddate = startdate + dt.timedelta(days=1)
-interval = dt.timedelta(hours=1)
+def get_meteo (coordinates = [(47.11, 11.47)], parameters = ['t_2m:C', 'precip_1h:mm', 'wind_speed_10m:ms'], 
+               startdate = dt.datetime.utcnow().replace(minute=0, second=0, microsecond=0), 
+               enddate_value = 1, interval_value = 1 ):
+    # variable
+    global username
+    global password
 
-df = api.query_time_series(coordinates, startdate, enddate, interval, parameters, username, password, model=model)
+    # requet pour l'API de la meteo
+    model = 'mix'
+    enddate = startdate + dt.timedelta(days=enddate_value)
+    interval = dt.timedelta(hours=interval_value)
 
-print(df)
-
-def get_meteo ():
+    df = api.query_time_series(coordinates, startdate, enddate, interval, parameters, username, password, model=model)
+    print(df)
+    
     return df
