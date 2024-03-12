@@ -21,5 +21,3 @@ def get_info(text):
         if info['when'] == day:
             info.update({'when': days[day]})
     return info
-
-print(datetime.date(2024, 3, 12))
