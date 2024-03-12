@@ -15,10 +15,12 @@ connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={os.environ
 conn = pyodbc.connect(connectionString)
 
 SQL_QUERY = """
-
+            select * from dbo.monitoring_vw
 """
 
 cursor = conn.cursor()
 cursor.execute(SQL_QUERY)
 
 records = cursor.fetchall()
+print(records)
+
