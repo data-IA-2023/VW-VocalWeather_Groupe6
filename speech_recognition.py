@@ -19,12 +19,22 @@ load_dotenv(dotenv_path=env_path)
 
 
 # appelle l'API speechsdk depuis Azure
-def recognize_from_microphone():
+def recognize_from_microphone(path_audio = None):
+    """
+    ne supporte que le format WAV
+    >>> recognize_from_microphone(f'{repertoir_fichier}/static/stt_test_1.wav')
+    Vous avez un nouveau message.
+    >>> recognize_from_microphone(f'{repertoir_fichier}/static/stt_test_2.wav')
+    10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0.
+    """
     # This example requires environment variables named "SPEECH_KEY" and "SPEECH_REGION"
     speech_config = speechsdk.SpeechConfig(subscription=os.getenv('SPEECH_KEY'), region=os.getenv('SPEECH_REGION'))
     speech_config.speech_recognition_language="fr-FR"
 
-    audio_config = speechsdk.audio.AudioConfig(use_default_microphone=True)
+    if path_audio != None :
+        audio_config = speechsdk.audio.AudioConfig(use_default_microphone=False, filename=path_audio)
+    else :
+        audio_config = speechsdk.audio.AudioConfig(use_default_microphone=True)
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
 
     print("Speak into your microphone.")
@@ -42,4 +52,6 @@ def recognize_from_microphone():
             print("Did you set the speech resource key and region values?")
 
 # test de la fonction recognize_from_microphone()
-recognize_from_microphone()
+# recognize_from_microphone()
+# recognize_from_microphone(f'{repertoir_fichier}/static/stt_test_1.wav')
+# recognize_from_microphone(f'{repertoir_fichier}/static/stt_test_2.wav')
