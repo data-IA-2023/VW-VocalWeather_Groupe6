@@ -5,6 +5,7 @@ import pandas as pd
 from nlp import get_info
 from geocoding import geocode_address
 from meteo import get_meteo
+import datetime
 
 st.title("Vocal Weather")
 st.write("Appuyer sur le bouton pour parler et faire votre démande météo")
@@ -12,14 +13,16 @@ st.write("Appuyer sur le bouton pour parler et faire votre démande météo")
 #On utilise audio.wav pour convertir l'audio au text
 
 audio = audiorecorder("Parler", "Finir la commande")
-text = speech_to_text()
-
-location = get_info(text)['where']
-time = get_info(text)['when']
-
-
 if len(audio) > 0:
     audio.export("audio.wav", format="wav")
+
+text = speech_to_text()
+
+#info = {'where':'tours','when': datetime.datetime(2024,3,12)}
+
+info = get_info(text)
+location = info['where']
+time = info['when']
 
 coordinates = geocode_address(location)
 
