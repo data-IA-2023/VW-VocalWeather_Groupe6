@@ -21,14 +21,15 @@ from fastapi.staticfiles import StaticFiles
 # methode : 
 #     recognize_from_microphone ()
 # ==========================================
-# from speech_recognition import recognize_from_microphone
+from speech_recognition import recognize_from_microphone
 # ==========================================
 # classe :
-#     
+#     NLP
 # methode : 
-#     
+#     get_info(text)=> return info{'where':'', 'when':''}
+#     date_jours_nom ( DATE ) => date (yyyy, mm, jj) à partir du nom d'un jours
 # ==========================================
-from nlp import *
+from nlp import get_info
 # ==========================================
 # classe :
 #     meteo

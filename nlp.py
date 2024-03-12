@@ -1,44 +1,169 @@
 """
 ==========================================
 classe :
-    
+    NLP
 methode : 
-    
+    get_info(text)=> return info{'where':'', 'when':''}
+    date_jours_nom ( DATE ) => date (yyyy, mm, jj) à partir du nom d'un jours
 ==========================================
 """
-
 # importations des librairie
-import spacy
-from spacy.lang.fr import French
-from spacy.matcher import Matcher
+from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
+import datetime
 
-# Construction from subclass
-nlp = French()
+tokenizer = AutoTokenizer.from_pretrained("Jean-Baptiste/camembert-ner-with-dates")
+model = AutoModelForTokenClassification.from_pretrained("Jean-Baptiste/camembert-ner-with-dates")
+nlp = pipeline('ner', model=model, tokenizer=tokenizer, aggregation_strategy="simple")
 
-# initialise pipeline pré-entrainer en francais de spacy
-nlp = spacy.load("fr_core_news_sm")
+def get_info(text):
+    """
+    ne supporte que le format WAV
+    >>> get_info("quel temps fait-il aujourd'hui à orléans")
+    {'where':'orléans', 'when':'aujourd'hui'}
+    >>> get_info("quel est la meteo à bracieux demain")
+    {'where':'bracieux', 'when':'demain'}
+    >>> get_info("quel temps fairra-il lundi à paris")
+    {'where':'paris', 'when':'lundi'}
+    >>> get_info("quel est la meteo à vouvray la semaine prochaine")
+    {'where':'vouvray', 'when':'dans 3 jours'}
+    """
+    days = {"aujourd'hui" : datetime.date.today(), 
+            'demain' : datetime.date.today() + datetime.timedelta(days=1), 
+            'hier': datetime.date.today() + datetime.timedelta(days=-1), 
+            'aprésdemain' : datetime.date.today() + datetime.timedelta(days=2),
+            'dans 2 jours' : datetime.date.today() + datetime.timedelta(days=2), 
+            'dans 3 jours' : datetime.date.today() + datetime.timedelta(days=3),
+            'dans 4 jours' : datetime.date.today() + datetime.timedelta(days=4), 
+            'dans 5 jours' : datetime.date.today() + datetime.timedelta(days=5),
+            'dans 6 jours' : datetime.date.today() + datetime.timedelta(days=6),
+            'dans une semaine' : datetime.date.today() + datetime.timedelta(days=7),
+            'semaine prochaine' : datetime.date.today() + datetime.timedelta(days=7), 
+            "aujourd'hui à" : datetime.date.today(), 
+            'demain à' : datetime.date.today() + datetime.timedelta(days=1), 
+            'hier à': datetime.date.today() + datetime.timedelta(days=-1),
+            'aprésdemain à' : datetime.date.today() + datetime.timedelta(days=2), 
+            'dans 2 jours à' : datetime.date.today() + datetime.timedelta(days=2), 
+            'dans 3 jours à' : datetime.date.today() + datetime.timedelta(days=3),
+            'dans 4 jours à' : datetime.date.today() + datetime.timedelta(days=4),
+            'dans 5 jours à' : datetime.date.today() + datetime.timedelta(days=5),
+            'dans 6 jours à' : datetime.date.today() + datetime.timedelta(days=6),
+            'dans une semaine à' : datetime.date.today() + datetime.timedelta(days=7),
+            'semaine prochaine à' : datetime.date.today() + datetime.timedelta(days=7)}
+    
+    list_jour = ["lundi", "lundi à", "mardi", "mardi à", "mercredi", "mercredi à", "jeudi", "jeudi à", "vendredi", "vendredi à", 
+                 "samedi", "samedi à", "dimanche", "dimanche à"]
+    doc = nlp(text)
+    info={}
+    for word in doc:
+        if word['entity_group'] == 'LOC':
+            info.update({'where':word['word']})
+        if word['entity_group'] == 'DATE':
+            if word['word'] in list_jour :
+                info.update({'when':date_jours_nom (word['word'])  })
+            else :
+                info.update({'when':word['word']})
+    for day in days:
+        if info['when'] == day:
+            info.update({'when': days[day]})
+    return info, doc
 
-def nlm_traitement ( spetch_to_text ) :
+def date_jours_nom ( DATE ):
+    jour_actu = datetime.date.today().weekday()
+    if DATE == "lundi" or DATE == "lundi à" :
+        jour_cible = 0
+    elif DATE == "mardi" or DATE == "mardi à" :
+        jour_cible = 1
+    elif DATE == "mercredi" or DATE == "mercredi à" :
+        jour_cible = 2
+    elif DATE == "jeudi" or DATE == "jeudi à" :
+        jour_cible = 3
+    elif DATE == "vendredi" or DATE == "vendredi à" :
+        jour_cible = 4
+    elif DATE == "samedi" or DATE == "samedi à":
+        jour_cible = 5
+    else:
+        jour_cible = 6
+    
+    if jour_actu == 0 :
+        dif = abs(jour_actu - jour_cible)
+        day = datetime.date.today() + datetime.timedelta(days=dif)
+    if jour_actu == 1 : 
+        if jour_cible == 0 :
+            dif = 6
+            day = datetime.date.today() + datetime.timedelta(days=dif) 
+        else :
+            dif = abs(jour_actu - jour_cible)
+            day = datetime.date.today() + datetime.timedelta(days=dif) 
+    if jour_actu == 2 :
+        if jour_cible == 0 :
+            dif = 5
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+        if jour_cible == 1 :
+            dif = 6
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+        else :
+            dif = abs(jour_actu - jour_cible)
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+    if jour_actu == 3 :
+        if jour_cible == 0 :
+            dif = 4
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+        if jour_cible == 1 :
+            dif = 5
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+        if jour_cible == 2 :
+            dif = 6
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+        else :
+            dif = abs(jour_actu - jour_cible)
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+    if jour_actu == 4 :
+        if jour_cible == 0 :
+            dif = 3
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+        if jour_cible == 1 :
+            dif = 4
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+        if jour_cible == 2 :
+            dif = 5
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+        if jour_cible == 3 :
+            dif = 6
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+        else :
+            dif = abs(jour_actu - jour_cible)
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+    if jour_actu == 5 :
+        if jour_cible == 0 :
+            dif = 2
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+        if jour_cible == 1 :
+            dif = 3
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+        if jour_cible == 2 :
+            dif = 4
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+        if jour_cible == 3 :
+            dif = 5
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+        if jour_cible == 4 :
+            dif = 6
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+        else :
+            dif = abs(jour_actu - jour_cible)
+            day = datetime.date.today() + datetime.timedelta(days=dif)
+    if jour_actu == 6 :
+        dif = abs(jour_cible+1)
+        day = datetime.date.today() + datetime.timedelta(days=dif)
+    
+    return day
 
-    doc = nlp(spetch_to_text)
-
-    # Initialise le matcher avec le vocabulaire partagé
-    matcher = Matcher(nlp.vocab)
-
-    # Crée un motif qui recherche les deux tokens : "X" et "Pro"
-    pattern = [{"TEXT": "X"}, {"TEXT": "Pro"}]
-
-    # Ajoute le motif au matcher
-    matcher.add("IPHONE_X_PATTERN", [pattern])
-
-    # Utilise le matcher sur le doc
-    matches = matcher(doc)
-    print("Résultats :", [doc[start:end].text for match_id, start, end in matches])
-
-    for token in doc:
-        print(token.text, token.lemma_, token.pos_, token.tag_, token.dep_,
-                token.shape_, token.is_alpha, token.is_stop, token)
-    print("doc :", doc)
-
-result = nlm_traitement("quel temps il vera demain à Tours")
-print(result)
+# print(datetime.date.today())
+# info_1, doc_1 = get_info("quel temps fait-il aujourd'hui à orléans")
+# print("info_1 :", info_1, doc_1)
+# info_2, doc_2 = get_info("quel est la meteo à bracieux demain")
+# print("info_2 :", info_2, doc_2)
+# info_3, doc_3 = get_info("quel temps fairra-il lundi à paris")
+# print("info_3 :", info_3, doc_3)
+# info_4, doc_4 = get_info("quel est la meteo à vouvray dans une semaine")
+# print("info_4 :", info_4, doc_4)
