@@ -9,12 +9,6 @@ classe de l'appli fastAPI
 appelle des api,
 appelle de l'interface utilisateur
 """
-# importations des librairie
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
-
 # ==========================================
 # classe :
 #     API speechsdk appeller depuis Azure
@@ -45,22 +39,32 @@ from geocoding import geocode_address
 # =========================================
 from meteo import get_meteo
 
+# importations des librairie
+from speech_recognition import speech_to_text
+import streamlit as st
+from audiorecorder import audiorecorder
+import pandas as pd
+from nlp import get_info
+from geocoding import geocode_address
+
 # =========================================
-# run : uvicorn main:app
+# main
 # =========================================
 
-# création de l'appli
-app = FastAPI()
+st.title("Audio Recorder")
+audio = audiorecorder("Click to record", "Click to stop recording")
 
-# création des listes de fichier dans les dociers "templates" et "static"
-templates = Jinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+if len(audio) > 0:
+    audio.export("audio.wav", format="wav")
 
-meteo = get_meteo
+#On utilise audio.wav pour convertir l'audio au text
+text = speech_to_text()
+ville = get_info(text)['where']
+time = get_info(text)['when']
 
-# appelle de la page home
-@app.get("/home", response_class=HTMLResponse)
-async def home(request: Request):
-    return templates.TemplateResponse("home.html", {"request": request, "meteo_r":meteo})
-    
-# recognize_from_microphone()
+st.write(ville, time)
+
+lat, lon = geocode_address(ville)
+
+coordinates_in_df = pd.DataFrame.from_dict({'latitude':[lat], 'longitude':[lon]}) #st.map prends un dataframe
+st.map(coordinates_in_df)
