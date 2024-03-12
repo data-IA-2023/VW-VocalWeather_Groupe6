@@ -1,5 +1,4 @@
 
-
 import os
 from dotenv import load_dotenv
 import datetime as dt
@@ -14,13 +13,12 @@ load_dotenv(dotenv_path=env_path)
 username = subscription=os.getenv('username_meteo')
 password = subscription=os.getenv('password_meteo')
 
-def get_meteo (coordinates, time):
+def get_meteo(coordinates, startdate):
 
     # requet pour l'API de la meteo
-    coordinates = [(47.11, 11.47)]
+    coordinates = [coordinates]
     parameters = ['t_2m:C', 'precip_1h:mm', 'wind_speed_10m:ms']
     model = 'mix'
-    startdate = dt.datetime(2024,7,15).replace(minute=0, second=0, microsecond=0)
     enddate = startdate + dt.timedelta(days=1)
     interval = dt.timedelta(hours=1)
 
@@ -28,5 +26,3 @@ def get_meteo (coordinates, time):
 
 
     return df
-
-print(get_meteo())

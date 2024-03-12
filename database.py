@@ -15,13 +15,7 @@ connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={os.environ
 conn = pyodbc.connect(connectionString)
 
 SQL_QUERY = """
-            select s.name as schema_name, 
-    s.schema_id,
-    u.name as schema_owner
-from sys.schemas s
-    inner join sys.sysusers u
-        on u.uid = s.principal_id
-order by s.name
+
 """
 
 cursor = conn.cursor()

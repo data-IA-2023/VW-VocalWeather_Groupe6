@@ -4,21 +4,26 @@ from audiorecorder import audiorecorder
 import pandas as pd
 from nlp import get_info
 from geocoding import geocode_address
+from meteo import get_meteo
 
-st.title("Audio Recorder")
-audio = audiorecorder("Click to record", "Click to stop recording")
+st.title("Vocal Weather")
+st.write("Appuyer sur le bouton pour parler et faire votre démande météo")
+
+#On utilise audio.wav pour convertir l'audio au text
+with st.sidebar:
+    audio = audiorecorder("Parler", "Finir la commande")
+
+text = speech_to_text()
+location = get_info(text)['where']
+time = get_info(text)['when']
+
 
 if len(audio) > 0:
     audio.export("audio.wav", format="wav")
 
-#On utilise audio.wav pour convertir l'audio au text
-text = speech_to_text()
-ville = get_info(text)['where']
-time = get_info(text)['when']
+coordinates = geocode_address(location)
 
-st.write(ville, time)
-
-lat, lon = geocode_address(ville)
-
-coordinates_in_df = pd.DataFrame.from_dict({'latitude':[lat], 'longitude':[lon]}) #st.map prends un dataframe
+coordinates_in_df = pd.DataFrame.from_dict({'latitude':[coordinates[0]], 'longitude':[coordinates[1]]}) #st.map prends un dataframe
+st.write(get_meteo(coordinates, time))
 st.map(coordinates_in_df)
+
