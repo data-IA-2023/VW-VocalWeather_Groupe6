@@ -23,13 +23,14 @@ load_dotenv(dotenv_path=env_path)
 username = subscription=os.getenv('username_meteo')
 password = subscription=os.getenv('password_meteo')
 
-def get_meteo (coordinates = [(47.11, 11.47)], parameters = ['t_2m:C', 'precip_1h:mm', 'wind_speed_10m:ms'], 
+def get_meteo (coordonnee = (47.11, 11.47), parameters = ['t_2m:C', 'precip_1h:mm', 'wind_speed_10m:ms'], 
                startdate = dt.datetime.utcnow().replace(minute=0, second=0, microsecond=0), 
                enddate_value = 1, interval_value = 1 ):
     # variable
     global username
     global password
 
+    coordinates = [coordonnee]
     # requet pour l'API de la meteo
     model = 'mix'
     enddate = startdate + dt.timedelta(days=enddate_value)

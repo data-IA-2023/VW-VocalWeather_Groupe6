@@ -32,6 +32,13 @@ from speech_recognition import recognize_from_microphone
 from nlp import get_info
 # ==========================================
 # classe :
+#     geocoding
+# methode : 
+#     geocode_address(address): latitude, longitude => résultat de la requet de l'api 
+# ==========================================
+from geocoding import geocode_address
+# ==========================================
+# classe :
 #     meteo
 # methode : 
 #     get_meteo: dataframe => résultat de la requet de l'api

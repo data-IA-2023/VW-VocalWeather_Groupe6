@@ -21,6 +21,12 @@ api_key = os.getenv('GEOCODING_KEY')
 gmaps = googlemaps.Client(key=api_key)
 
 def geocode_address(address):
+    """
+    >>> latitude_1, longitude_1 = geocode_address('tours')
+    latitude_1, longitude_1 : 47.394144 0.68484
+    >>> latitude_1, longitude_1 = geocode_address('paris')
+    latitude_1, longitude_1 : 48.856614 2.3522219
+    """
     # Geocode the address
     geocode_result = gmaps.geocode(address, language = 'fr')
     
@@ -33,8 +39,11 @@ def geocode_address(address):
     else:
         return None
     
-latitude_1, longitude_1 = geocode_address('tours')
-print("latitude, longitude :",latitude_1, longitude_1)
+# latitude_1, longitude_1 = geocode_address('tours')
+# print("latitude, longitude :",latitude_1, longitude_1)
 
-latitude_2, longitude_2 = geocode_address('paris')
-print("latitude, longitude :",latitude_2, longitude_2)
+result = geocode_address('tours')
+print("result :",result)
+
+# latitude_2, longitude_2 = geocode_address('paris')
+# print("latitude, longitude :",latitude_2, longitude_2)
