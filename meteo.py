@@ -14,7 +14,6 @@ username = subscription=os.getenv('username_meteo')
 password = subscription=os.getenv('password_meteo')
 
 def get_meteo(coordinates, startdate):
-
     # requet pour l'API de la meteo
     coordinates = [coordinates]
     parameters = ['t_2m:C', 'precip_1h:mm', 'wind_speed_10m:ms']

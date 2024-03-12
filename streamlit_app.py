@@ -10,10 +10,10 @@ st.title("Vocal Weather")
 st.write("Appuyer sur le bouton pour parler et faire votre démande météo")
 
 #On utilise audio.wav pour convertir l'audio au text
-with st.sidebar:
-    audio = audiorecorder("Parler", "Finir la commande")
 
+audio = audiorecorder("Parler", "Finir la commande")
 text = speech_to_text()
+
 location = get_info(text)['where']
 time = get_info(text)['when']
 
