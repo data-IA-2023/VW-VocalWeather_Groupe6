@@ -3,7 +3,7 @@
 classe :
     API speechsdk appeller depuis Azure
 methode : 
-    recognize_from_microphone ()
+    speech_to_text()
 ==========================================
 """
 # importations des librairie
@@ -19,12 +19,12 @@ load_dotenv(dotenv_path=env_path)
 
 
 # appelle l'API speechsdk depuis Azure
-def recognize_from_microphone(path_audio = None):
+def speech_to_text(path_audio = None):
     """
     ne supporte que le format WAV
-    >>> recognize_from_microphone(f'{repertoir_fichier}/static/stt_test_1.wav')
+    >>> speech_to_text(f'{repertoir_fichier}/static/stt_test_1.wav')
     Vous avez un nouveau message.
-    >>> recognize_from_microphone(f'{repertoir_fichier}/static/stt_test_2.wav')
+    >>> speech_to_text(f'{repertoir_fichier}/static/stt_test_2.wav')
     10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0.
     """
     # This example requires environment variables named "SPEECH_KEY" and "SPEECH_REGION"
@@ -34,7 +34,8 @@ def recognize_from_microphone(path_audio = None):
     if path_audio != None :
         audio_config = speechsdk.audio.AudioConfig(use_default_microphone=False, filename=path_audio)
     else :
-        audio_config = speechsdk.audio.AudioConfig(use_default_microphone=True)
+        audio_config = speechsdk.audio.AudioConfig(filename=f'{repertoir_fichier}/audio.wav')
+    
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
 
     print("Speak into your microphone.")
@@ -50,8 +51,9 @@ def recognize_from_microphone(path_audio = None):
         if cancellation_details.reason == speechsdk.CancellationReason.Error:
             print("Error details: {}".format(cancellation_details.error_details))
             print("Did you set the speech resource key and region values?")
+    return speech_recognition_result.text
 
-# test de la fonction recognize_from_microphone()
-# recognize_from_microphone()
-# recognize_from_microphone(f'{repertoir_fichier}/static/stt_test_1.wav')
-# recognize_from_microphone(f'{repertoir_fichier}/static/stt_test_2.wav')
+# test de la fonction speech_to_text()
+# speech_to_text()
+# speech_to_text(f'{repertoir_fichier}/static/stt_test_1.wav')
+# speech_to_text(f'{repertoir_fichier}/static/stt_test_2.wav')
