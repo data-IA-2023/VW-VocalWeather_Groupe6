@@ -22,6 +22,5 @@ def get_meteo(coordinates, startdate):
     interval = dt.timedelta(hours=1)
 
     df = api.query_time_series(coordinates, startdate, enddate, interval, parameters, username, password, model=model)
-
-
+    
     return df

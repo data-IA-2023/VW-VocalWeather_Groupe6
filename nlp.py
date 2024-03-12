@@ -7,7 +7,7 @@ model = AutoModelForTokenClassification.from_pretrained("Jean-Baptiste/camembert
 nlp = pipeline('ner', model=model, tokenizer=tokenizer, aggregation_strategy="simple")
 
 def get_info(text):
-    days = {'hier': datetime.date.today() - datetime.timedelta(days=1), 'aprés demain' : datetime.date.today() + datetime.timedelta(days=2), 'demain' : datetime.date.today() + datetime.timedelta(days=1)}
+    days = {'hier': datetime.date.today() - datetime.timedelta(days=1), 'après-demain' : datetime.date.today() + datetime.timedelta(days=2), 'demain' : datetime.date.today() + datetime.timedelta(days=1)}
     doc = nlp(text)
     info={}
     for word in doc:
@@ -15,8 +15,10 @@ def get_info(text):
             info.update({'where':word['word']})
         if word['entity_group'] == 'DATE':
             print(word['word'])
-            info.update({'when': dateparser.parse(word['word'])})
-    """ for day in days:
+            info.update({'when': dateparser.parse(word['word'], languages = ['fr'])})
+    for day in days:
         if info['when'] == day:
-            info.update({'when': days[day]}) """
+            info.update({'when': days[day]})
     return info
+
+print(get_info("Donne moi la meteo a mexico pour après-demain"))
