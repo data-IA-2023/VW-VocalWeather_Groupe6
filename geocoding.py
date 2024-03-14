@@ -21,10 +21,10 @@ def geocode_address(address):
             location = geocode_result[0]['geometry']['location']
             latitude = location['lat']
             longitude = location['lng']
-            loc = (latitude, longitude)
+            loc = f"{latitude}, {longitude}"
             sendresultgeo(loc)
             return latitude, longitude  
         else:
-            return None
+          return None
     except Exception as error:
         senderrorgeo(error)

@@ -9,7 +9,8 @@ env_path = f'{repertoir_fichier}/.env'
 load_dotenv(dotenv_path=env_path)
 
 def speech_to_text():
-    try: # clé et région dans le .env
+    try: 
+        # clé et région dans le .env
         speech_config = speechsdk.SpeechConfig(subscription=os.environ.get('SPEECH_KEY'), region=os.environ.get('SPEECH_REGION'))
         speech_config.speech_recognition_language="fr-FR"
 
@@ -19,12 +20,14 @@ def speech_to_text():
         speech_recognition_result = speech_recognizer.recognize_once_async().get()
 
         if speech_recognition_result.reason == speechsdk.ResultReason.RecognizedSpeech:
+            sendresultspeech(speech_recognition_result.text)
             return speech_recognition_result.text
         elif speech_recognition_result.reason == speechsdk.ResultReason.NoMatch:
+            sendresultspeech(speech_recognition_result.no_match_details)
             return "Nous avons pas réussi à detecter votre voix: {}".format(speech_recognition_result.no_match_details)
         elif speech_recognition_result.reason == speechsdk.ResultReason.Canceled:
             cancellation_details = speech_recognition_result.cancellation_details
+            sendresultspeech("Programme annulée: {}".format(cancellation_details.reason))
             return "Programme annulée: {}".format(cancellation_details.reason)
-        sendresultspeech(speech_recognition_result.text)
     except Exception as error:
         senderrorspeech(error)

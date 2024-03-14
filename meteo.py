@@ -26,4 +26,4 @@ def get_meteo(coordinates, startdate):
         sendresultmeteo("Meteo connecté correctement")
         return df
     except Exception as error:
-        senderrormeteo(error)
+       senderrormeteo(error)

@@ -17,81 +17,103 @@ def sendresultspeech(output):
     conn = pyodbc.connect(connectionString)
     SQL_QUERY = f"""
             INSERT INTO dbo.monitoring_vw (timestamp, result_stt, statut_stt)
-            VALUES ({datetime.now()} {output} {'OK'})
+            OUTPUT INSERTED.ID
+            VALUES (?, ?, ?)
     """
     cursor = conn.cursor()
-    cursor.execute(SQL_QUERY)
+    cursor.execute(SQL_QUERY, datetime.now(), output, 'OK')
     conn.commit()
+    cursor.close()
+    conn.close()
 
 def senderrorspeech(error):
     conn = pyodbc.connect(connectionString)
     SQL_QUERY = f"""
             INSERT INTO dbo.monitoring_vw (timestamp, result_stt, statut_stt) 
-            VALUES ({datetime.now()} {error} {'ERROR'})
+            OUTPUT INSERTED.ID
+            VALUES (?, ?, ?)
     """
     cursor = conn.cursor()
+    cursor.execute(SQL_QUERY, datetime.now(), error, 'ERROR')
     cursor.execute(SQL_QUERY)
     conn.commit()
 
 def sendresultnlp(date, loc):
     conn = pyodbc.connect(connectionString)
     SQL_QUERY = f"""
-            INSERT INTO dbo.monitoring_vw (timestamp, date_nlp, localisation_nlp) 
-            VALUES ({datetime.now()} {date} {loc})
+            INSERT INTO dbo.monitoring_vw (timestamp, date_nlp, localisation_nlp, statut_nlp) 
+            OUTPUT INSERTED.ID
+            VALUES (?, ?, ?, ?)
     """
     cursor = conn.cursor()
-    cursor.execute(SQL_QUERY)
+    cursor.execute(SQL_QUERY, datetime.now(), date, loc, 'OK')
     conn.commit()
-
+    cursor.close()
+    conn.close()
 
 def senderrornlp(error):
     conn = pyodbc.connect(connectionString)
     SQL_QUERY = f"""
             INSERT INTO dbo.monitoring_vw (timestamp, date_nlp, localisation_nlp) 
-            VALUES ({datetime.now()} {error} {'ERROR'})
+            OUTPUT INSERTED.ID
+            VALUES (?, ?, ?, ?)
     """
     cursor = conn.cursor()
-    cursor.execute(SQL_QUERY)
+    cursor.execute(SQL_QUERY, datetime.now(), error, error, 'ERROR')
     conn.commit()
+    cursor.close()
+    conn.close()
 
 def sendresultgeo(output):
     conn = pyodbc.connect(connectionString)
     SQL_QUERY = f"""
             INSERT INTO dbo.monitoring_vw (timestamp, localisation_geo, statut_geo) 
-            VALUES ({datetime.now()} {output} {'OK'})
+            OUTPUT INSERTED.ID
+            VALUES (?, ?, ?)
     """
     cursor = conn.cursor()
-    cursor.execute(SQL_QUERY)
+    cursor.execute(SQL_QUERY, datetime.now(), output, 'OK')
     conn.commit()
+    cursor.close()
+    conn.close()
 
 def senderrorgeo(error):
     conn = pyodbc.connect(connectionString)
     SQL_QUERY = f"""
             INSERT INTO dbo.monitoring_vw (timestamp, localisation_geo, statut_geo) 
-            VALUES ({datetime.now()} {error} {'ERROR'})
+            OUTPUT INSERTED.ID
+            VALUES (?, ?, ?)
     """
     cursor = conn.cursor()
-    cursor.execute(SQL_QUERY)
+    cursor.execute(SQL_QUERY, datetime.now(), error, 'ERROR')
     conn.commit()
+    cursor.close()
+    conn.close()
 
 
 def sendresultmeteo(output):
     conn = pyodbc.connect(connectionString)
     SQL_QUERY = f"""
             INSERT INTO dbo.monitoring_vw (timestamp, result_meteo, statut_meteo) 
-            VALUES ({datetime.now()} {output} {'OK'})
+            OUTPUT INSERTED.ID
+            VALUES (?, ?, ?)
     """
     cursor = conn.cursor()
-    cursor.execute(SQL_QUERY)
+    cursor.execute(SQL_QUERY, datetime.now(), output, 'OK')
     conn.commit()
+    cursor.close()
+    conn.close()
 
 def senderrormeteo(error):
     conn = pyodbc.connect(connectionString)
     SQL_QUERY = f"""
             INSERT INTO dbo.monitoring_vw (timestamp, result_meteo, statut_meteo) 
-            VALUES ({datetime.now()} {error} {'ERROR'})
+            OUTPUT INSERTED.ID
+            VALUES (?, ?, ?)
     """
     cursor = conn.cursor()
-    cursor.execute(SQL_QUERY)
+    cursor.execute(SQL_QUERY, datetime.now(), error, 'ERROR')
     conn.commit()
+    cursor.close()
+    conn.close()
 

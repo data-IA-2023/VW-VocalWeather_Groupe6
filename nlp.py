@@ -16,7 +16,6 @@ def get_info(text):
             if word['entity_group'] == 'LOC':
                 info.update({'where':word['word']})
             if word['entity_group'] == 'DATE':
-                print(word['word'])
                 info.update({'when': dateparser.parse(word['word'], languages = ['fr'])})
         for day in days:
             if info['when'] == day:
