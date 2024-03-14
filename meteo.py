@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 import datetime as dt
 import meteomatics.api as api
+from database import sendresultmeteo, senderrormeteo
 
 # Trouve le chemein du fichier .env et l'ouvre par dotenv
 repertoir_fichier = os.path.dirname(__file__)
@@ -15,12 +16,14 @@ password = subscription=os.getenv('password_meteo')
 
 def get_meteo(coordinates, startdate):
     # requet pour l'API de la meteo
-    coordinates = [coordinates]
-    parameters = ['t_2m:C', 'precip_1h:mm', 'wind_speed_10m:ms']
-    model = 'mix'
-    enddate = startdate + dt.timedelta(days=1)
-    interval = dt.timedelta(hours=1)
-
-    df = api.query_time_series(coordinates, startdate, enddate, interval, parameters, username, password, model=model)
-    
-    return df
+    try: 
+        coordinates = [coordinates]
+        parameters = ['t_2m:C', 'precip_1h:mm', 'wind_speed_10m:ms']
+        model = 'mix'
+        enddate = startdate + dt.timedelta(days=1)
+        interval = dt.timedelta(hours=1)
+        df = api.query_time_series(coordinates, startdate, enddate, interval, parameters, username, password, model=model)
+        sendresultmeteo("Meteo connecté correctement")
+        return df
+    except Exception as error:
+        senderrormeteo(error)
