@@ -38,6 +38,14 @@ from geocoding import geocode_address
 #     get_meteo: dataframe => résultat de la requet de l'api
 # =========================================
 from meteo import get_meteo
+# ==========================================
+# classe :
+#     database
+# methode : 
+#     monitoring: insert les résultats a la BDD
+# =========================================
+from database import monitoring
+
 
 # importations des librairie
 import streamlit as st
@@ -47,16 +55,8 @@ import datetime
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-# import pydub
-# pydub.AudioSegment.ffmpeg = "C:\\ffmpeg-master-latest-win64-gpl\\bin\\ffmpeg.exe"
-# pydub.AudioSegment.converter = "C:\\ffmpeg-master-latest-win64-gpl\\bin\\ffmpeg.exe"
-# pydub.AudioSegment.ffprobe ="C:\\ffmpeg\\ffmpeg\\bin\\ffprobe.exe"
 
-# =========================================
-# main run : streamlit run c:/Users/sandy/Documents/devIA/brief/vw_vocal_weather/VW-VocalWeather_Groupe6/main.py
-# =========================================
 
-# traitement du bouton de captation de l'audio
 def set_audio():
     st.session_state.Parler = True
 
@@ -121,110 +121,91 @@ st.markdown('''<style>h1
             </style>''', unsafe_allow_html=True)
 
 # variable de l'api météo
-datetime_value = None
+time = None
 coordinates = None
 
 # main page
 st.title("Vocal Weather")
 st.write("Appuyer sur le bouton pour parler et faire votre démande météo")
 
-# si session_state.stage==1 : l'utilisateur à cliger sur "Parler"
+# si session_state.stage==1 : l'utilisateur à cliquer sur "Parler"
 if st.session_state.Parler :
     try  :
-        text = speech_to_text()
-        # text = "Quel temps fera-t-il à Paris demain ?"
+        #-----AZURE STT-----
+        try:
+            text = speech_to_text()
+            statut_stt = "OK"
+        except Exception as error:
+            text = "unknown"
+            statut_stt = error
 
         st.sidebar.write(f"Tu vien de dire : '{text}'")
-
-        info = get_info(text)
-        # print("info :", info)
-        location = info['where']
-        time = info['when']
-        # print("location :", location, "time :", time)
-        time_heur = datetime.time(hour=0, minute=0, second=0, microsecond=0)
-        datetime_value = datetime.datetime.combine(time, time_heur)
-        # print("times :", datetime_value)
-        # print("location :", location, "time :", datetime_value)
+        
+        #-----CAMEMBERT NLP--------
+        try:
+            info = get_info(text)
+            location = info['where']
+            time = info['when']
+            statut_nlp = "OK"
+        except Exception as error:
+            location = "unknown"
+            time = "unknown"
+            statut_nlp = error
 
         st.sidebar.write(f"Tu chreche donc a avoir la météo à {location} pour le {time} ?")
         st.sidebar.write("Si ce n'est pas correcte, merci de recommencer.")
         
-        coordinates = geocode_address(location)
-        # print("coordinates :", coordinates)
+        #-----GOOGLE GEOCODING------
+        try:
+            coordinates = geocode_address(location)
+            loc_coord = f"({coordinates[0]}, {coordinates[1]})"
+            statut_geo = "OK"
+        except Exception as error:
+            localisation = "unknown"
+            statut_geo = error
 
     except :
         st.sidebar.error("Tu n'as pas été assez compris par la reconnaissence vocal, merci de recommencer...")
         
-if coordinates != None and datetime_value != None :
+if coordinates != None and time != None :
     try :
-        # global gb_coordinates
-        # gb_coordinates = coordinates
-        # print("test 1 :", coordinates, datetime_value)
-
         st.write(f"à {location} le {time}, la météo sera :")
+        
+        #-----METEO METEOMATICS API-------
+        try:
+            df_meteo = get_meteo(coordonnee = coordinates, startdate = time)
+            status_meteo = "OK"
+        except Exception as error:
+            status_meteo = error
 
-        # st.write(f"météo à {coordinates} pour le {datetime_value}")
-        df_meteo = get_meteo(coordonnee = coordinates, startdate = datetime_value)
-        print("df_meteo :", df_meteo)
         coordinates_in_df = pd.DataFrame.from_dict({'latitude':[coordinates[0]], 'longitude':[coordinates[1]]}) #st.map prends un dataframe
         
-        # print("type 1 :",type(df_meteo))
-        # print( df_meteo.info() )
-
         df_meteo = df_meteo.reset_index()
-        # print("type 2 :",type(df_meteo))
-        # print( df_meteo.info() )
-
         plt.style.use('ggplot')
+
         # figure
         fig = plt.figure(figsize=(8, 6))
         ax = fig.add_subplot(111)
         ax.set_title("température, présipitation et vitesse du vent", color="#555555")
+
         # plot the differents quantities
         ax.plot(df_meteo["validdate"], df_meteo["t_2m:C"], marker="o", label="température", linestyle="--", linewidth=.5)
         ax.plot(df_meteo["validdate"], df_meteo["precip_1h:mm"], marker="o", label="présipitation", linestyle="--", linewidth=.5)
         ax.plot(df_meteo["validdate"], df_meteo["wind_speed_10m:ms"], marker="o", label="vitesse du vent", linestyle="--", linewidth=.5)
+        
         # format and style
         ax.legend()
         fig.savefig("xy_pop.png", dpi=300)
 
         st.pyplot(fig)
         st.map(coordinates_in_df)
+
     except :
         st.sidebar.error("Le lieu ou la date n'ont pas été comprise, merci de recommencer...") 
+
+#function pour envoyer tous les resultats à la base de données
+monitoring(text, statut_stt, time, location, statut_nlp, loc_coord, statut_geo, status_meteo)
 
 st.markdown('''<style>.st-emotion-cache-1v0mbdj e115fcil1
             { display: contents; } 
             </style>''', unsafe_allow_html=True)
-
-# =========================================
-# ancienne vertion
-# =========================================
-
-# #On utilise audio.wav pour convertir l'audio au text
-# audio = audiorecorder("Parler", "Finir la commande")
-# if len(audio) > 0:
-#     audio.export("audio.wav", format="wav")
-
-# text = speech_to_text()
-# print("text :", text)
-# #info = {'where':'tours','when': datetime.datetime(2024,3,12)}
-
-# info = get_info(text)
-# print("info :", info)
-# location = info['where']
-# time = info['when']
-# print("location :", location, "time :", time)
-# time_heur = datetime.time(hour=0, minute=0, second=0, microsecond=0)
-# datetime_value = datetime.datetime.combine(time, time_heur)
-# print("times :", datetime_value)
-# print("location :", location, "time :", datetime_value)
-
-# coordinates = geocode_address(location)
-# print("coordinates :", coordinates)
-
-# df_meteo = get_meteo(coordonnee = coordinates, startdate = datetime_value)
-# print("df_meteo :", df_meteo)
-# coordinates_in_df = pd.DataFrame.from_dict({'latitude':[coordinates[0]], 'longitude':[coordinates[1]]}) #st.map prends un dataframe
-# st.write(df_meteo)
-# st.map(coordinates_in_df)

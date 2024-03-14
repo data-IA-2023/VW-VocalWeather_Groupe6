@@ -4,29 +4,20 @@ classe :
     NLP
 methode : 
     get_info(text)=> return info{'where':'', 'when':''}
-    date_jours_nom ( DATE ) => date (yyyy, mm, jj) à partir du nom d'un jours
+    date_jours_nom ( DATE ) => date (yyyy, mm, jj) à partir du nom d'un jour
 ==========================================
 """
 # importations des librairie
 from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
 import datetime
+import dateparser
 
 tokenizer = AutoTokenizer.from_pretrained("Jean-Baptiste/camembert-ner-with-dates")
 model = AutoModelForTokenClassification.from_pretrained("Jean-Baptiste/camembert-ner-with-dates")
 nlp = pipeline('ner', model=model, tokenizer=tokenizer, aggregation_strategy="simple")
 
 def get_info(text):
-    """
-    ne supporte que le format WAV
-    >>> get_info("quel temps fait-il aujourd'hui à orléans")
-    {'where':'orléans', 'when':'aujourd'hui'}
-    >>> get_info("quel est la meteo à bracieux demain")
-    {'where':'bracieux', 'when':'demain'}
-    >>> get_info("quel temps fairra-il lundi à paris")
-    {'where':'paris', 'when':'lundi'}
-    >>> get_info("quel est la meteo à vouvray la semaine prochaine")
-    {'where':'vouvray', 'when':'dans 3 jours'}
-    """
+
     days = {"aujourd'hui" : datetime.date.today(), 
             'demain' : datetime.date.today() + datetime.timedelta(days=1), 
             'hier': datetime.date.today() + datetime.timedelta(days=-1), 
@@ -59,9 +50,9 @@ def get_info(text):
             info.update({'where':word['word']})
         if word['entity_group'] == 'DATE':
             if word['word'] in list_jour :
-                info.update({'when':date_jours_nom (word['word'])  })
+                info.update({'when': date_jours_nom(word['word'])})
             else :
-                info.update({'when':word['word']})
+                info.update({'when':dateparser.parse(word['word'], languages=["fr"])})
     for day in days:
         if info['when'] == day:
             info.update({'when': days[day]})
@@ -87,14 +78,14 @@ def date_jours_nom ( DATE ):
     if jour_actu == 0 :
         dif = abs(jour_actu - jour_cible)
         day = datetime.date.today() + datetime.timedelta(days=dif)
-    if jour_actu == 1 : 
+    elif jour_actu == 1 : 
         if jour_cible == 0 :
             dif = 6
             day = datetime.date.today() + datetime.timedelta(days=dif) 
         else :
             dif = abs(jour_actu - jour_cible)
             day = datetime.date.today() + datetime.timedelta(days=dif) 
-    if jour_actu == 2 :
+    elif jour_actu == 2 :
         if jour_cible == 0 :
             dif = 5
             day = datetime.date.today() + datetime.timedelta(days=dif)
@@ -104,7 +95,7 @@ def date_jours_nom ( DATE ):
         else :
             dif = abs(jour_actu - jour_cible)
             day = datetime.date.today() + datetime.timedelta(days=dif)
-    if jour_actu == 3 :
+    elif jour_actu == 3 :
         if jour_cible == 0 :
             dif = 4
             day = datetime.date.today() + datetime.timedelta(days=dif)
@@ -117,7 +108,7 @@ def date_jours_nom ( DATE ):
         else :
             dif = abs(jour_actu - jour_cible)
             day = datetime.date.today() + datetime.timedelta(days=dif)
-    if jour_actu == 4 :
+    elif jour_actu == 4 :
         if jour_cible == 0 :
             dif = 3
             day = datetime.date.today() + datetime.timedelta(days=dif)
@@ -133,7 +124,7 @@ def date_jours_nom ( DATE ):
         else :
             dif = abs(jour_actu - jour_cible)
             day = datetime.date.today() + datetime.timedelta(days=dif)
-    if jour_actu == 5 :
+    elif jour_actu == 5 :
         if jour_cible == 0 :
             dif = 2
             day = datetime.date.today() + datetime.timedelta(days=dif)
@@ -152,24 +143,10 @@ def date_jours_nom ( DATE ):
         else :
             dif = abs(jour_actu - jour_cible)
             day = datetime.date.today() + datetime.timedelta(days=dif)
-    if jour_actu == 6 :
+    elif jour_actu == 6 :
         dif = abs(jour_cible+1)
         day = datetime.date.today() + datetime.timedelta(days=dif)
     
-    return day
+    return datetime.datetime.combine(day, datetime.datetime.min.time())
 
-# print(datetime.date.today())
-# info_1 = get_info("quel temps fait-il aujourd'hui à orléans")
-# print("info_1 :", info_1)
-# info_2 = get_info("quel est la meteo à bracieux demain")
-# print("info_2 :", info_2)
-# info_3 = get_info("quel temps fairra-il lundi à paris")
-# print("info_3 :", info_3)
-# info_4 = get_info("quel est la meteo à vouvray dans une semaine")
-# print("info_4 :", info_4)
-
-# time = info_4['when']
-# print("time :", time)
-# time_heur = datetime.time(hour=0, minute=0, second=0, microsecond=0)
-# datetime_value = datetime.datetime.combine(time, time_heur)
-# print("times :", datetime_value)
+print(get_info("C'est quoi la meteo pour dimanche à Paris ?"))
