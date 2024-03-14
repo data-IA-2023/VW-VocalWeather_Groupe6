@@ -65,7 +65,7 @@ if 'Parler' not in st.session_state:
 
 # entête de la page 
 st.set_page_config(
-    page_title="Connection",
+    page_title="Vocal_Weather",
     page_icon="static/icon.png",
 )
 
@@ -95,8 +95,8 @@ st.markdown('''<style>.st-emotion-cache-1v0mbdj
             {align-items: center;} 
             </style>''', unsafe_allow_html=True)
 
-st.markdown('''<style>.st-emotion-cache-1mc90bd 
-            {background-color: rgb(38,196,236);color: rgb(255,255,255);border: 1px solid ##22b0d4} 
+st.markdown('''<style>.st-emotion-cache-a31l0r 
+            {background-color: rgb(38,196,236);} 
             </style>''', unsafe_allow_html=True)
 
 # side bar
