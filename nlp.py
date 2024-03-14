@@ -65,7 +65,7 @@ def get_info(text):
     for day in days:
         if info['when'] == day:
             info.update({'when': days[day]})
-    return info, doc
+    return info
 
 def date_jours_nom ( DATE ):
     jour_actu = datetime.date.today().weekday()
@@ -159,11 +159,17 @@ def date_jours_nom ( DATE ):
     return day
 
 # print(datetime.date.today())
-# info_1, doc_1 = get_info("quel temps fait-il aujourd'hui à orléans")
-# print("info_1 :", info_1, doc_1)
-# info_2, doc_2 = get_info("quel est la meteo à bracieux demain")
-# print("info_2 :", info_2, doc_2)
-# info_3, doc_3 = get_info("quel temps fairra-il lundi à paris")
-# print("info_3 :", info_3, doc_3)
-# info_4, doc_4 = get_info("quel est la meteo à vouvray dans une semaine")
-# print("info_4 :", info_4, doc_4)
+# info_1 = get_info("quel temps fait-il aujourd'hui à orléans")
+# print("info_1 :", info_1)
+# info_2 = get_info("quel est la meteo à bracieux demain")
+# print("info_2 :", info_2)
+# info_3 = get_info("quel temps fairra-il lundi à paris")
+# print("info_3 :", info_3)
+# info_4 = get_info("quel est la meteo à vouvray dans une semaine")
+# print("info_4 :", info_4)
+
+# time = info_4['when']
+# print("time :", time)
+# time_heur = datetime.time(hour=0, minute=0, second=0, microsecond=0)
+# datetime_value = datetime.datetime.combine(time, time_heur)
+# print("times :", datetime_value)
