@@ -21,6 +21,7 @@ def sendresultspeech(output):
     """
     cursor = conn.cursor()
     cursor.execute(SQL_QUERY)
+    conn.commit()
 
 def senderrorspeech(error):
     conn = pyodbc.connect(connectionString)
@@ -30,6 +31,7 @@ def senderrorspeech(error):
     """
     cursor = conn.cursor()
     cursor.execute(SQL_QUERY)
+    conn.commit()
 
 def sendresultnlp(date, loc):
     conn = pyodbc.connect(connectionString)
@@ -39,6 +41,7 @@ def sendresultnlp(date, loc):
     """
     cursor = conn.cursor()
     cursor.execute(SQL_QUERY)
+    conn.commit()
 
 
 def senderrornlp(error):
@@ -49,6 +52,7 @@ def senderrornlp(error):
     """
     cursor = conn.cursor()
     cursor.execute(SQL_QUERY)
+    conn.commit()
 
 def sendresultgeo(output):
     conn = pyodbc.connect(connectionString)
@@ -58,6 +62,7 @@ def sendresultgeo(output):
     """
     cursor = conn.cursor()
     cursor.execute(SQL_QUERY)
+    conn.commit()
 
 def senderrorgeo(error):
     conn = pyodbc.connect(connectionString)
@@ -67,6 +72,7 @@ def senderrorgeo(error):
     """
     cursor = conn.cursor()
     cursor.execute(SQL_QUERY)
+    conn.commit()
 
 
 def sendresultmeteo(output):
@@ -77,6 +83,7 @@ def sendresultmeteo(output):
     """
     cursor = conn.cursor()
     cursor.execute(SQL_QUERY)
+    conn.commit()
 
 def senderrormeteo(error):
     conn = pyodbc.connect(connectionString)
@@ -86,4 +93,5 @@ def senderrormeteo(error):
     """
     cursor = conn.cursor()
     cursor.execute(SQL_QUERY)
+    conn.commit()
 
