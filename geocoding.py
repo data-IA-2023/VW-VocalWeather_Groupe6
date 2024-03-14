@@ -42,8 +42,8 @@ def geocode_address(address):
 # latitude_1, longitude_1 = geocode_address('tours')
 # print("latitude, longitude :",latitude_1, longitude_1)
 
-result = geocode_address('tours')
-print("result :",result)
+# result = geocode_address('tours')
+# print("result :",result)
 
 # latitude_2, longitude_2 = geocode_address('paris')
 # print("latitude, longitude :",latitude_2, longitude_2)

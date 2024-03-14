@@ -34,7 +34,7 @@ def speech_to_text(path_audio = None):
     if path_audio != None :
         audio_config = speechsdk.audio.AudioConfig(use_default_microphone=False, filename=path_audio)
     else :
-        audio_config = speechsdk.audio.AudioConfig(filename=f'{repertoir_fichier}/audio.wav')
+        audio_config = speechsdk.audio.AudioConfig(use_default_microphone=True)
     
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
 

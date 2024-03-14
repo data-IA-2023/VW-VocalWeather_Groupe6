@@ -40,3 +40,6 @@ def get_meteo (coordonnee = (47.11, 11.47), parameters = ['t_2m:C', 'precip_1h:m
     print(df)
     
     return df
+
+# df = get_meteo()
+# print("df :", df)
