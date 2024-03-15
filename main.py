@@ -149,7 +149,7 @@ if st.session_state.Parler :
             statut_nlp = "OK"
         except Exception as error:
             location = "unknown"
-            time = "unknown"
+            time = datetime.date.today()
             statut_nlp = error
 
         st.sidebar.write(f"Tu chreche donc a avoir la météo à {location} pour le {time} ?")
@@ -161,47 +161,47 @@ if st.session_state.Parler :
             loc_coord = f"({coordinates[0]}, {coordinates[1]})"
             statut_geo = "OK"
         except Exception as error:
-            localisation = "unknown"
+            loc_coord = "unknown"
             statut_geo = error
 
     except :
         st.sidebar.error("Tu n'as pas été assez compris par la reconnaissence vocal, merci de recommencer...")
         
-if coordinates != None and time != None :
-    try :
-        st.write(f"à {location} le {time}, la météo sera :")
-        
-        #-----METEO METEOMATICS API-------
-        try:
-            df_meteo = get_meteo(coordonnee = coordinates, startdate = time)
-            status_meteo = "OK"
-        except Exception as error:
-            status_meteo = error
+#if coordinates != None and time != None :
+try :
+    st.write(f"à {location} le {time}, la météo sera :")
+    
+    #-----METEO METEOMATICS API-------
+    try:
+        df_meteo = get_meteo(coordonnee = coordinates, startdate = time)
+        status_meteo = "OK"
+    except Exception as error:
+        status_meteo = error
 
-        coordinates_in_df = pd.DataFrame.from_dict({'latitude':[coordinates[0]], 'longitude':[coordinates[1]]}) #st.map prends un dataframe
-        
-        df_meteo = df_meteo.reset_index()
-        plt.style.use('ggplot')
+    coordinates_in_df = pd.DataFrame.from_dict({'latitude':[coordinates[0]], 'longitude':[coordinates[1]]}) #st.map prends un dataframe
+    
+    df_meteo = df_meteo.reset_index()
+    plt.style.use('ggplot')
 
-        # figure
-        fig = plt.figure(figsize=(8, 6))
-        ax = fig.add_subplot(111)
-        ax.set_title("température, présipitation et vitesse du vent", color="#555555")
+    # figure
+    fig = plt.figure(figsize=(8, 6))
+    ax = fig.add_subplot(111)
+    ax.set_title("température, présipitation et vitesse du vent", color="#555555")
 
-        # plot the differents quantities
-        ax.plot(df_meteo["validdate"], df_meteo["t_2m:C"], marker="o", label="température", linestyle="--", linewidth=.5)
-        ax.plot(df_meteo["validdate"], df_meteo["precip_1h:mm"], marker="o", label="présipitation", linestyle="--", linewidth=.5)
-        ax.plot(df_meteo["validdate"], df_meteo["wind_speed_10m:ms"], marker="o", label="vitesse du vent", linestyle="--", linewidth=.5)
-        
-        # format and style
-        ax.legend()
-        fig.savefig("xy_pop.png", dpi=300)
+    # plot the differents quantities
+    ax.plot(df_meteo["validdate"], df_meteo["t_2m:C"], marker="o", label="température", linestyle="--", linewidth=.5)
+    ax.plot(df_meteo["validdate"], df_meteo["precip_1h:mm"], marker="o", label="présipitation", linestyle="--", linewidth=.5)
+    ax.plot(df_meteo["validdate"], df_meteo["wind_speed_10m:ms"], marker="o", label="vitesse du vent", linestyle="--", linewidth=.5)
+    
+    # format and style
+    ax.legend()
+    fig.savefig("xy_pop.png", dpi=300)
 
-        st.pyplot(fig)
-        st.map(coordinates_in_df)
+    st.pyplot(fig)
+    st.map(coordinates_in_df)
 
-    except :
-        st.sidebar.error("Le lieu ou la date n'ont pas été comprise, merci de recommencer...") 
+except :
+    st.sidebar.error("Le lieu ou la date n'ont pas été comprise, merci de recommencer...") 
 
 #function pour envoyer tous les resultats à la base de données
 monitoring(text, statut_stt, time, location, statut_nlp, loc_coord, statut_geo, status_meteo)
